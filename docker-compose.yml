@@ -1,0 +1,33 @@
+version: '3'
+services:
+    rabbitmq:
+        image: rabbitmq:3.11-management
+        restart: always
+        environment:
+          RABBITMQ_DEFAULT_USER: usramqp
+          RABBITMQ_DEFAULT_PASS: Qc6ZxJSBrhRVsrY
+        volumes:
+            - ./var_rabbitmq:/var/lib/rabbitmq
+            - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+        ports:
+            - 127.0.0.1:15675:15672
+    
+    redis:
+       image: redis
+       restart: always
+       command: redis-server --save 3600 1
+       volumes:
+           - ./cache:/data
+       ports:
+           - 127.0.0.1:6445:6379
+    
+    salesContracts:
+        image: sg_bi_api_salescontracts:v1.00
+        volumes:
+            - ./logs/salesContracts:/app/logs
+        environment:
+            - TZ=America/Sao_Paulo
+        restart: always
+        depends_on:
+            - rabbitmq
+            - redis
