@@ -14,7 +14,7 @@ class Agregador:
         
     def getData(self):
         try:
-            print('Iniciando a busca dos contratos de vendas...', flush=True)
+            print(f'Iniciando a busca da API {self.api}:', flush=True)
             tempoExecucao = time.time()
             offset = 0
             retorno = []
@@ -37,10 +37,10 @@ class Agregador:
             tempoExecucao = time.time() - tempoExecucao
             resultMetaData['data'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             resultMetaData['executionTime'] = f'{tempoExecucao:.2f}'
-            salesContracts = {'resultSetMetadata': resultMetaData, 'results': retorno}
+            info = {'resultSetMetadata': resultMetaData, 'results': retorno}
             
             # Salvando no Redis o JSON
-            self.rd.set('salesContracts', json.dumps(salesContracts))
+            self.rd.set(f'{self.api}', json.dumps(info))
             return True
             
         except Exception as err:

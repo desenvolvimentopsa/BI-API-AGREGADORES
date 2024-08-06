@@ -25,12 +25,12 @@ except Exception as e:
     
 def main():
     try:
-        salesContract = Agregador(rd, 'sales-contracts', env['sienge_user'], env['sienge_pwd'], env['dominio'])
+        salesContract = Agregador(rd, 'creditors', env['sienge_user'], env['sienge_pwd'], env['dominio'])
         dados = salesContract.getData()
         if dados:
-            print('Contratos de vendas salvos com sucesso!', flush=True)
+            print('Credores salvos com sucesso!', flush=True)
         else:
-            raise Exception('Erro ao salvar contratos de vendas!')
+            raise Exception('Erro ao salvar credores!')
         
     except Exception as err:
         print("Error on 'main' service: ", err, flush=True)
