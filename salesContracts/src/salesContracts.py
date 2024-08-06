@@ -77,11 +77,13 @@ def main():
         user = env['sienge_user']
         password = env['sienge_pwd']
         dominio = env['dominio']
+        tempoExecucao = time.time()
         salesContracts, resultMetaData = getSalesContracts(user, password, dominio)
+        tempoExecucao = time.time() - tempoExecucao
         if salesContracts and resultMetaData is not None:
             resultMetaData['data'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            resultMetaData['executionTime'] = f'{tempoExecucao:.2f}'
             salesContracts = {'resultSetMetadata': resultMetaData, 'results': salesContracts}
-            print('Contratos de vendas salvos com sucesso!', salesContracts)
             saveSalesContracts(salesContracts)
         else:
             raise Exception('Erro ao buscar contratos de vendas')
