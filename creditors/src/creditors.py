@@ -25,8 +25,8 @@ except Exception as e:
     
 def main():
     try:
-        salesContract = Agregador(rd, 'creditors', env['sienge_user'], env['sienge_pwd'], env['dominio'])
-        dados = salesContract.getData()
+        creditors = Agregador(rd, 'creditors', env['sienge_user'], env['sienge_pwd'], env['dominio'])
+        dados = creditors.getData()
         if dados:
             print('Credores salvos com sucesso!', flush=True)
         else:
