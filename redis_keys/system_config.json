@@ -1,0 +1,17 @@
+{
+    "sistema": "integracao_welt",
+    "nome_cliente": "welt",
+    "amqps": "amqps://rnraluwi:v6pRbVu6psBABqn7pg81a2nnuChc833d@tall-cyan-dog.rmq4.cloudamqp.com/rnraluwi",
+    "dominio": "welt",
+    "origem": "salvador",
+    "sienge_url": "welt.sienge.com.br", 
+    "sienge_user": "welt-psa",
+    "sienge_pwd": "IWih9KXFjr6BLx4WFYVJGAdx5Sx9gFDn"
+}
+
+{
+    "amqps": "amqps://rnraluwi:v6pRbVu6psBABqn7pg81a2nnuChc833d@tall-cyan-dog.rmq4.cloudamqp.com/rnraluwi",
+    "dominio": "bambui",
+    "sienge_user": "bambui-psad",
+    "sienge_pwd": "STPOi4bCpz0UuZfaCNB7dEjQQKjqrbeM"
+}
