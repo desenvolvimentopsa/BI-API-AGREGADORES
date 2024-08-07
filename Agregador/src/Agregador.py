@@ -43,7 +43,7 @@ class Agregador:
                 
             # Calculando tempo de execução
             tempoExecucao = time.time() - tempoExecucao
-            resultMetaData['data'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            resultMetaData['date'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             resultMetaData['executionTime'] = f'{tempoExecucao:.2f}'
             info = {'resultSetMetadata': resultMetaData, 'results': retorno}
             
