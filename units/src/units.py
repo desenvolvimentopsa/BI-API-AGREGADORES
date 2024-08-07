@@ -25,14 +25,14 @@ except Exception as e:
     
 def main():
     try:
-        api = 'customers'
+        api = 'units'
         url = f"https://api.sienge.com.br/{env['dominio']}/public/api/v1/{api}?"
         extraction = Agregador(rd, api, url, env['sienge_user'], env['sienge_pwd'], env['dominio'])
         dados = extraction.getData()
         if dados:
-            print('Clientes salvos com sucesso!', flush=True)
+            print('Unidades salvas com sucesso!', flush=True)
         else:
-            raise Exception('Erro ao salvar clientes!')
+            raise Exception('Erro ao salvar unidades de vendas!')
         
     except Exception as err:
         print("Error on 'main' service: ", err, flush=True)

@@ -27,8 +27,8 @@ def main():
     try:
         api = 'sales-contracts'
         url = f"https://api.sienge.com.br/{env['dominio']}/public/api/v1/{api}?"
-        salesContracts = Agregador(rd, api, url, env['sienge_user'], env['sienge_pwd'], env['dominio'])
-        status = salesContracts.getData()
+        extraction = Agregador(rd, api, url, env['sienge_user'], env['sienge_pwd'], env['dominio'])
+        status = extraction.getData()
         if status:
             print('Contratos de vendas salvos com sucesso!', flush=True)
         else:

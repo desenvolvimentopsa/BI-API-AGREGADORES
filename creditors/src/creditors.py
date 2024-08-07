@@ -27,8 +27,8 @@ def main():
     try:
         api = 'creditors'
         url = f"https://api.sienge.com.br/{env['dominio']}/public/api/v1/{api}?"
-        creditors = Agregador(rd, api, url, env['sienge_user'], env['sienge_pwd'], env['dominio'])
-        dados = creditors.getData()
+        extraction = Agregador(rd, api, url, env['sienge_user'], env['sienge_pwd'], env['dominio'])
+        dados = extraction.getData()
         if dados:
             print('Credores salvos com sucesso!', flush=True)
         else:
