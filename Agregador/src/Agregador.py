@@ -4,8 +4,9 @@ import time
 import datetime
 
 class Agregador:
-    def __init__(self, rd, api, user, password, dominio, timeout=10):
+    def __init__(self, rd, api, url, user, password, dominio, timeout=10):
         self.rd = rd
+        self.url = url
         self.api = api
         self.user = user
         self.password = password
@@ -16,11 +17,12 @@ class Agregador:
         try:
             print(f'Iniciando a busca da API {self.api}:', flush=True)
             tempoExecucao = time.time()
+            self.urlBase = self.url
             offset = 0
             retorno = []
             resultMetaData = {}
             while True:
-                self.url = f"https://api.sienge.com.br/{self.dominio}/public/api/v1/{self.api}?limit=200&offset={offset}"
+                self.url = f'{self.urlBase}&limit=200&offset={offset}'
                 print(self.url, flush=True)
                 response = self.getApi()
                 resultMetaData = response['resultSetMetadata']
@@ -40,7 +42,7 @@ class Agregador:
             info = {'resultSetMetadata': resultMetaData, 'results': retorno}
             
             # Salvando no Redis o JSON
-            self.rd.set(f'{self.api}', json.dumps(info))
+            self.rd.set(f'{self.dominio}-{self.api}', json.dumps(info))
             return True
             
         except Exception as err:

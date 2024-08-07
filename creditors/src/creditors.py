@@ -25,7 +25,9 @@ except Exception as e:
     
 def main():
     try:
-        creditors = Agregador(rd, 'creditors', env['sienge_user'], env['sienge_pwd'], env['dominio'])
+        api = 'creditors'
+        url = f"https://api.sienge.com.br/{env['dominio']}/public/api/v1/{api}?"
+        creditors = Agregador(rd, api, url, env['sienge_user'], env['sienge_pwd'], env['dominio'])
         dados = creditors.getData()
         if dados:
             print('Credores salvos com sucesso!', flush=True)

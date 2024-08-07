@@ -25,9 +25,11 @@ except Exception as e:
     
 def main():
     try:
-        salesContracts = Agregador(rd, 'sales-contracts', env['sienge_user'], env['sienge_pwd'], env['dominio'])
-        dados = salesContracts.getData()
-        if dados:
+        api = 'sales-contracts'
+        url = f"https://api.sienge.com.br/{env['dominio']}/public/api/v1/{api}?"
+        salesContracts = Agregador(rd, api, url, env['sienge_user'], env['sienge_pwd'], env['dominio'])
+        status = salesContracts.getData()
+        if status:
             print('Contratos de vendas salvos com sucesso!', flush=True)
         else:
             raise Exception('Erro ao salvar contratos de vendas!')
