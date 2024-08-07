@@ -10,7 +10,7 @@
 }
 
 {
-    "amqps": "amqps://rnraluwi:v6pRbVu6psBABqn7pg81a2nnuChc833d@tall-cyan-dog.rmq4.cloudamqp.com/rnraluwi",
+    "amqps": "amqps://sg_biapi:lvxJUm3GCHjhUJAJb6fdSxVUfcqzN@tall-cyan-dog.rmq4.cloudamqp.com/sg_biapi_host",
     "dominio": "bambui",
     "sienge_user": "bambui-psad",
     "sienge_pwd": "STPOi4bCpz0UuZfaCNB7dEjQQKjqrbeM"

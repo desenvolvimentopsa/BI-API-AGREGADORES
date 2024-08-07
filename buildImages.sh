@@ -24,10 +24,3 @@ echo SALESCONTRACTS
 docker build -t sg_bi_api_salescontracts${version} .
 cd ..
 rm -rf salesContracts/utils
-
-# cd processar
-# cp -r ../utils .
-# echo PROCESSAR 
-# docker build -t sg_bi_api_salescontracts${version} .
-# cd ..
-# rm -rf processar/utils
