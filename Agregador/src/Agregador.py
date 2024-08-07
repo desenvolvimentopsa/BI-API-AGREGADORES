@@ -22,9 +22,15 @@ class Agregador:
             retorno = []
             resultMetaData = {}
             while True:
+                # Atualizando a URL
+                # Independente da URL passada, a URL final será a URLBase + limit=200&offset=0, proporcionando com que qualquer API possa ser passada para esta classe.
+                # Ex: https://api.sienge.com.br/{env['dominio']}/public/api/v1/sales-contracts?customerId=1&cpf=12345678901
+                # Será transformada em: https://api.sienge.com.br/{env['dominio']}/public/api/v1/sales-contracts?customerId=1&cpf=12345678901&limit=200&offset=0
                 self.url = f'{self.urlBase}&limit=200&offset={offset}'
                 print(self.url, flush=True)
                 response = self.getApi()
+                
+                # Retirando do JSON os campos offset e limit
                 resultMetaData = response['resultSetMetadata']
                 if 'offset' in resultMetaData:
                     del resultMetaData['offset']
