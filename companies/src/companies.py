@@ -2,40 +2,117 @@ import redis
 import json
 import time
 import sys
+import datetime
 
 from Agregador import *
+from Exchange import *
+
+# VARIÁVEIS GLOBAIS
+dataInicio = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+incremento = 0
+api = 'companies'
+amqps= "amqps://sg_biapi:lvxJUm3GCHjhUJAJb6fdSxVUfcqzN@tall-cyan-dog.rmq4.cloudamqp.com/sg_biapi_host"
 
 # CONFIGURA O REDIS
 # DADOS CONFIGURAÇÃO REDIS
 rd = None
-env = {}
-infoConfig = {}
 try:
     rd = redis.Redis("localhost", 6445)
-    envjs = rd.get("system_config")
-    if envjs is None:
-        print("CHAVE system_config NAO ENCONTRADA", flush=True)
-        time.sleep(10)
-        sys.exit(1)
-    env = json.loads(envjs)
 except Exception as e:
     print("SERVICE REDIS DOWN: ", e, flush=True)
     time.sleep(10)
     sys.exit(1)
-    
-def main():
+
+# data:
+# {
+# "salesContractId": int,
+# "client": "bambui",
+# "service": "SALES_CONTRACT_CREATED",
+# "api": "sales-contracts",
+# "url": "bambui.sienge.com.br",
+# "user": "psa",
+# "pass": "secret"
+# }
+
+def callback(ch, method, properties, body):
     try:
-        api = 'companies'
-        url = f"https://api.sienge.com.br/{env['dominio']}/public/api/v1/{api}?"
-        extraction = Agregador(rd, api, url, env['sienge_user'], env['sienge_pwd'], env['dominio'])
-        dados = extraction.getData()
-        if dados:
-            print('Empresas salvas com sucesso!', flush=True)
+        # Independente, libera a mensagem da fila
+        ch.basic_ack(delivery_tag = method.delivery_tag)
+        
+        # Incrementa o contador de acessos, quantas vezes esse agregador rodou.
+        incremento = incremento + 1
+        
+        # JSON de resultado da execução
+        result = {
+            "dataInicio": dataInicio,
+            "dataUltimoAcesso": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            "api": api,
+            "acessos": incremento,
+            "status": "DONE",
+        }
+        
+        # Fazer o tratamento do body
+        msg = body.decode("utf-8")
+        message = json.loads(msg)
+        payload = message.get('payload')
+        hmac = message.get('hmac')
+        
+        # Verifica se o payload é válido
+        if exchange.getPayload(hmac, payload):
+            print(f"Payload recebido [{payload}]", flush=True)
+            print(exchange.payload, flush=True)
+            msg = json.loads(exchange.payload)
+        
+            if api != msg['api'].lower():
+                raise Exception(f"API {api} não é a mesma da mensagem recebida")
+        
+        # Pegando a primeira posição do split da URL, que será o domínio
+        # bambui.sienge.com.br -> bambui
+        dominio = msg['url'].split(".")[0]
+        
+        # URL da API
+        url = f"https://api.sienge.com.br/{dominio}/public/api/v1/{api}?"
+        
+        # Instanciando a classe do Agregador
+        extraction = Agregador(rd, api, url, msg['user'], msg['pass'], dominio)
+        
+        status, resultSetMetadata = extraction.getData()
+        
+        # Verifica se o status é True
+        if status:
+            resultSetMetadata['payload'] = msg
+            payloadRetorno = json.dumps(resultSetMetadata)
+            exchange.setPayload(payloadRetorno)
+            exchange.sendMsg(json.dumps(result))
+            
         else:
-            raise Exception('Erro ao salvar empresas!')
+            # Se o status for False, retorna o JSON que a função getData retornou
+            raise Exception(resultSetMetadata)
         
     except Exception as err:
-        print("Error on 'main' service: ", err, flush=True)
-        return None
+        # Se ocorrer algum erro, retorna o erro
+        result['status'] = "ERROR"
+        result['error'] = str(err)
+        exchange.sendMsg(json.dumps(result))
+
+serviceid  = '01234567890123456789012345678901'
+servicekey = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ123456'
+host       = 'vini'
+version    = '1.0 08/08/2024 Vini - Exemplo de uso empresas'
+service    = 'agregador_companies'
+system     = 'sg_biapi'
+try:
+    exchange = QueueExchange(
+        amqps   = amqps,
+        host    = host,
+        system  = system, 
+        service = service,
+        version = version,
+        callback= callback)
+except Exception as ex:
+    print("[!] rabbitmq service offline", amqps, ex)
+    sys.exit(0)
     
-main()
+exchange.setCrypto(serviceid, servicekey)
+
+exchange.start_consuming()
