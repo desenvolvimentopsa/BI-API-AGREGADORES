@@ -10,6 +10,7 @@ from Exchange import *
 # VARIÁVEIS GLOBAIS
 dataInicio = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 incremento = 0
+result = {}
 api = 'companies'
 amqps= "amqps://sg_biapi:lvxJUm3GCHjhUJAJb6fdSxVUfcqzN@tall-cyan-dog.rmq4.cloudamqp.com/sg_biapi_host"
 
@@ -36,6 +37,7 @@ except Exception as e:
 
 def callback(ch, method, properties, body):
     try:
+        global incremento, result, api, dataInicio
         # Independente, libera a mensagem da fila
         ch.basic_ack(delivery_tag = method.delivery_tag)
         
@@ -82,7 +84,10 @@ def callback(ch, method, properties, body):
         if status:
             retorno['payload'] = msg
             payloadRetorno = json.dumps(retorno)
+            # Momento em que eu criptgrafo o retorno e ele fica em exchange.payload
+            # Porém ele ainda não foi enviado, apenas criptografado e aguardando um sendMsg.
             exchange.setPayload(payloadRetorno)
+            # Enviando a mensagem, além de criptografada, envia o 'result' que contém informações para métricas.
             exchange.sendMsg(json.dumps(result))
             
         else:
