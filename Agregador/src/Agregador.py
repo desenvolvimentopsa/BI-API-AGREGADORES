@@ -55,6 +55,7 @@ class Agregador:
             
             # Salvando no Redis o JSON
             self.rd.set(keyName, json.dumps(info))
+            print(f'Extração da {self.api} salva com sucesso!', flush=True)
             return True, resultMetaData
             
         except Exception as err:

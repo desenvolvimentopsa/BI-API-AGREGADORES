@@ -66,6 +66,7 @@ def callback(ch, method, properties, body):
             msg = json.loads(exchange.payload)
         
             if api != msg['api'].lower():
+                print(f"API {api} não é a mesma da mensagem recebida", flush=True)
                 raise Exception(f"API {api} não é a mesma da mensagem recebida")
         
         # Pegando a primeira posição do split da URL, que será o domínio
@@ -88,6 +89,7 @@ def callback(ch, method, properties, body):
             # Porém ele ainda não foi enviado, apenas criptografado e aguardando um sendMsg.
             exchange.setPayload(payloadRetorno)
             # Enviando a mensagem, além de criptografada, envia o 'result' que contém informações para métricas.
+            print(f'Enviando a mensagem: {json.dumps(result)}', flush=True)
             exchange.sendMsg(json.dumps(result))
             
         else:
