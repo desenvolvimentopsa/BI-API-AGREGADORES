@@ -76,25 +76,26 @@ def callback(ch, method, properties, body):
         # Instanciando a classe do Agregador
         extraction = Agregador(rd, api, url, msg['user'], msg['pass'], dominio)
         
-        status, resultSetMetadata = extraction.getData()
+        status, retorno = extraction.getData()
         
         # Verifica se o status é True
         if status:
-            resultSetMetadata['payload'] = msg
-            payloadRetorno = json.dumps(resultSetMetadata)
+            retorno['payload'] = msg
+            payloadRetorno = json.dumps(retorno)
             exchange.setPayload(payloadRetorno)
             exchange.sendMsg(json.dumps(result))
             
         else:
             # Se o status for False, retorna o JSON que a função getData retornou
-            raise Exception(resultSetMetadata)
+            raise Exception(retorno)
         
     except Exception as err:
         # Se ocorrer algum erro, retorna o erro
         result['status'] = "ERROR"
         result['error'] = str(err)
         exchange.sendMsg(json.dumps(result))
-
+        
+# INICIA O CONSUMO DA FILA + INSTANCIAMENTO DO EXCHANGE
 serviceid  = '01234567890123456789012345678901'
 servicekey = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ123456'
 host       = 'vini'
@@ -110,7 +111,7 @@ try:
         version = version,
         callback= callback)
 except Exception as ex:
-    print("[!] rabbitmq service offline", amqps, ex)
+    print("[!] rabbitmq service offline", amqps, ex, flush=True)
     sys.exit(0)
     
 exchange.setCrypto(serviceid, servicekey)
